@@ -47,14 +47,24 @@ def save():
 
         # Save data
         if is_ok:
-            with open("data.json", mode="w") as data_file:
+            with open("data.json", mode="r") as data_file:
                 new_data = {
                     website: {
                         "username": username,
                         "password": password,
                     }
                 }
-                json.dump(new_data, data_file, indent=4)
+
+                # Read from json file
+                data = json.load(data_file)
+
+                # Update json data (within program, not on file)
+                data.update(new_data)
+
+            with open("data.json", mode="w") as data_file:
+
+                # Write to json file
+                json.dump(data, data_file, indent=4)
 
                 website_input.delete(0, END)
                 pw_input.delete(0, END)
