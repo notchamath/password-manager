@@ -35,6 +35,13 @@ def save():
     username = username_input.get()
     password = pw_input.get()
 
+    new_data = {
+        website: {
+            "username": username,
+            "password": password,
+        }
+    }
+
     # Check for empty fields
     if len(website) == 0 or len(password) == 0 or len(username) == 0:
         messagebox.showwarning(title="Empty fields!", message="Fields cannot be empty!")
@@ -47,25 +54,26 @@ def save():
 
         # Save data
         if is_ok:
-            with open("data.json", mode="r") as data_file:
-                new_data = {
-                    website: {
-                        "username": username,
-                        "password": password,
-                    }
-                }
+            try:
+                with open("data.json", mode="r") as data_file:
 
-                # Read from json file
-                data = json.load(data_file)
+                    # Read from json file
+                    data = json.load(data_file)
 
+            except FileNotFoundError:
+                with open("data.json", mode="w") as data_file:
+                    # Write to json file
+                    json.dump(new_data, data_file, indent=4)
+
+            else:
                 # Update json data (within program, not on file)
                 data.update(new_data)
 
-            with open("data.json", mode="w") as data_file:
+                with open("data.json", mode="w") as data_file:
+                    # Write to json file
+                    json.dump(data, data_file, indent=4)
 
-                # Write to json file
-                json.dump(data, data_file, indent=4)
-
+            finally:
                 website_input.delete(0, END)
                 pw_input.delete(0, END)
 
