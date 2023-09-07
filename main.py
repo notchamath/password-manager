@@ -31,9 +31,9 @@ def generate_pw():
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
 def save():
-    website = website_input.get()
-    username = username_input.get()
-    password = pw_input.get()
+    website = website_input.get().lower()
+    username = username_input.get().lower()
+    password = pw_input.get().lower()
 
     new_data = {
         website: {
@@ -78,6 +78,23 @@ def save():
                 pw_input.delete(0, END)
 
 
+# ---------------------------- SEARCH BY WEBSITE NAME ------------------------------- #
+def search():
+    search_term = website_input.get().lower()
+    try:
+        with open("data.json", mode="r") as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="No Data File Found", message=f"No Data File Found")
+    else:
+        website = data.get(search_term)
+        if website is None:
+            messagebox.showinfo(title="Password Not Found", message=f"Website {search_term.title()} has no saved data")
+        else:
+            messagebox.showinfo(title=search_term.title(), message=f"Username: {website['username']}\n"
+                                                       f"Password: {website['password']}")
+
+
 # ---------------------------- UI SETUP ------------------------------- #
 
 # Window
@@ -104,7 +121,7 @@ pw_label.grid(column=0, row=3)
 
 # Website Entry
 website_input = Entry()
-website_input.grid(column=1, row=1, columnspan=2, sticky="EW")
+website_input.grid(column=1, row=1, sticky="EW")
 website_input.focus()
 
 # Username Entry
@@ -115,6 +132,10 @@ username_input.insert(END, "contact@chamathcodes.com")
 # PW Entry
 pw_input = Entry()
 pw_input.grid(column=1, row=3, sticky="EW")
+
+# Search Button
+add_btn = Button(text="Search", bg="white", command=search)
+add_btn.grid(column=2, row=1, sticky="EW")
 
 # PW Generator Button
 pw_generate = Button(text="Generate Password", bg="white", command=generate_pw)
